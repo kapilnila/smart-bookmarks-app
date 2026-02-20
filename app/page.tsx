@@ -56,9 +56,7 @@ export default function Home() {
   }, [session]);
 
   const login = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-    });
+    await supabase.auth.signInWithOAuth({ provider: "google" });
   };
 
   const logout = async () => {
@@ -84,73 +82,91 @@ export default function Home() {
 
   if (!session) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center bg-gray-100">
         <button
           onClick={login}
-          className="bg-black text-white px-6 py-3 rounded-lg"
+          className="bg-black text-white px-6 py-3 rounded-xl shadow hover:scale-105 transition"
         >
-          Login with Google
+          Sign in with Google
         </button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Smart Bookmark App</h1>
-        <button onClick={logout} className="text-red-500">
-          Logout
-        </button>
-      </div>
-
-      <div className="flex gap-2 mb-6">
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="border p-2 flex-1 rounded"
-        />
-        <input
-          type="text"
-          placeholder="URL"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          className="border p-2 flex-1 rounded"
-        />
-        <button
-          onClick={addBookmark}
-          className="bg-blue-600 text-white px-4 rounded"
-        >
-          Add
-        </button>
-      </div>
-
-      {bookmarks.length === 0 && (
-        <p className="text-gray-500">No bookmarks yet</p>
-      )}
-
-      {bookmarks.map((bookmark) => (
-        <div
-          key={bookmark.id}
-          className="border p-3 rounded mb-2 flex justify-between"
-        >
-          <a
-            href={bookmark.url}
-            target="_blank"
-            className="text-blue-600"
-          >
-            {bookmark.title}
-          </a>
+    <div className="min-h-screen bg-gray-100 py-10">
+      <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
+        
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-2xl font-bold">Smart Bookmark</h1>
+            <p className="text-gray-500 text-sm">
+              Logged in as {session.user.email}
+            </p>
+          </div>
           <button
-            onClick={() => deleteBookmark(bookmark.id)}
-            className="text-red-500"
+            onClick={logout}
+            className="text-red-500 hover:underline"
           >
-            Delete
+            Logout
           </button>
         </div>
-      ))}
+
+        {/* Add Form */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+          <input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="border p-2 rounded-lg"
+          />
+          <input
+            type="text"
+            placeholder="URL"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            className="border p-2 rounded-lg"
+          />
+          <button
+            onClick={addBookmark}
+            className="bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            Add Bookmark
+          </button>
+        </div>
+
+        {/* Bookmark List */}
+        {bookmarks.length === 0 ? (
+          <div className="text-center text-gray-400 py-10">
+            No bookmarks yet 🚀
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {bookmarks.map((bookmark) => (
+              <div
+                key={bookmark.id}
+                className="flex justify-between items-center border p-3 rounded-xl hover:shadow transition"
+              >
+                <a
+                  href={bookmark.url}
+                  target="_blank"
+                  className="text-blue-600 font-medium hover:underline"
+                >
+                  {bookmark.title}
+                </a>
+                <button
+                  onClick={() => deleteBookmark(bookmark.id)}
+                  className="text-red-500 text-sm"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
