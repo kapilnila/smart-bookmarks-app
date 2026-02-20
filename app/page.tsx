@@ -5,9 +5,17 @@ import { supabase } from "@/lib/supabase";
 import BookmarkForm from "@/components/BookmarkForm";
 import BookmarkList from "@/components/BookmarkList";
 
+type Bookmark = {
+  id: string;
+  title: string;
+  url: string;
+  user_id: string;
+  created_at: string;
+};
+
 export default function Home() {
   const [session, setSession] = useState<any>(null);
-  const [bookmarks, setBookmarks] = useState<any[]>([]);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -110,9 +118,10 @@ export default function Home() {
 
         <BookmarkForm
           userId={session.user.id}
-          onAdd={(newBookmark) =>
-            setBookmarks((prev) => [newBookmark, ...prev])
-          }
+          onAdd={(newBookmark: Bookmark) =>
+  setBookmarks((prev) => [newBookmark, ...prev])
+}
+
         />
 
         <BookmarkList
