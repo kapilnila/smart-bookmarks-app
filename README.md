@@ -1,71 +1,174 @@
-Smart Bookmark App
+📌 Smart Bookmark App
+
+A secure, real-time bookmark manager built using Next.js (App Router) and Supabase.
+
 🔗 Live Demo
-https://smart-bookmarks-app-git-main-kapil-nilas-projects.vercel.app/
+https://smart-bookmarks-app-puce.vercel.app/
 
-📦 GitHub Repo
-
+📦 GitHub Repository
 https://github.com/kapilnila/smart-bookmarks-app
 
-🚀 Tech Stack
+🚀 Overview
 
-Next.js (App Router)
+Smart Bookmark App allows users to:
 
-Supabase (Auth, Postgres, Realtime)
+Sign in securely using Google OAuth
 
-Tailwind CSS
+Save personal bookmarks
 
-Vercel Deployment
+View only their own bookmarks
+
+See real-time updates across tabs
+
+Add and delete bookmarks instantly
+
+The application demonstrates authentication, database security, real-time subscriptions, optimistic UI updates, and production deployment.
+
+🛠️ Tech Stack
+
+Frontend: Next.js (App Router)
+
+Authentication & Backend: Supabase
+
+Database: PostgreSQL (via Supabase)
+
+Styling: Tailwind CSS
+
+Deployment: Vercel
+
+Realtime: Supabase Postgres Change Subscriptions
 
 ✨ Features
+🔐 Google OAuth Authentication
 
-Google OAuth login (no email/password)
+Users log in securely via Google. No custom password handling required.
 
-Private bookmarks per user
+🔒 Row-Level Security (RLS)
 
-Real-time updates across tabs
+Bookmarks are private to each user.
 
-Add & delete bookmarks
+Implemented policies ensure:
 
-Secure Row Level Security (RLS)
+Users can only view their own bookmarks
 
-🔐 Security Implementation
+Users can only insert their own bookmarks
 
-Row Level Security policies ensure users can:
+Users can only delete their own bookmarks
 
-View only their bookmarks
-
-Insert only their own bookmarks
-
-Delete only their own bookmarks
-
-Implemented using:
+Example policy:
 
 auth.uid() = user_id
 
-⚡ Real-time Updates
 
-Implemented using Supabase Realtime subscriptions:
+This ensures database-level security.
 
-Listens to Postgres changes
+⚡ Real-Time Updates
 
-Automatically refreshes bookmarks
+The app subscribes to Postgres changes using Supabase Realtime.
 
-Works across multiple tabs
+Whenever a bookmark is added or deleted:
 
-🧠 Challenges Faced
+All open tabs update instantly
 
-Configuring Google OAuth redirect URIs correctly
+No manual refresh required
 
-Setting up proper RLS policies
+🚀 Optimistic UI
 
-Managing Supabase Realtime subscriptions without memory leaks
+Bookmarks appear instantly upon creation and disappear instantly upon deletion, providing a fast and responsive experience.
 
-🛠️ Setup Instructions
+✅ Input Validation
+
+URL validation using JavaScript new URL()
+
+Disabled add button if fields are empty
+
+Loading states for better UX
+
+🧠 Architecture
+Browser (Next.js Client)
+        ↓
+Supabase
+   • Google OAuth
+   • PostgreSQL Database
+   • Row-Level Security
+   • Realtime Subscriptions
+
+
+Supabase handles authentication, database operations, and real-time updates.
+
+🔧 Local Setup Instructions
+1️⃣ Clone the repository
+git clone https://github.com/kapilnila/smart-bookmarks-app.git
+cd smart-bookmarks-app
+
+2️⃣ Install dependencies
 npm install
+
+3️⃣ Create environment variables
+
+Create a .env.local file in root:
+
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+4️⃣ Run locally
 npm run dev
 
 
-Add .env.local:
+Open:
 
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+http://localhost:3000
+
+🧩 Challenges Faced
+
+Correctly configuring Google OAuth redirect URIs
+
+Implementing secure Row-Level Security policies
+
+Managing real-time subscriptions without memory leaks
+
+Handling optimistic UI updates properly
+
+📈 Future Improvements
+
+Edit bookmark functionality
+
+Bookmark tags and filtering
+
+Pagination for large datasets
+
+Dark mode support
+
+Toast notifications
+
+User profile customization
+
+🎯 Why This Project Matters
+
+This project demonstrates:
+
+Secure authentication flows
+
+Database-level access control
+
+Real-time event handling
+
+Clean component architecture
+
+Production deployment practices
+
+It reflects practical, full-stack application development using modern tools.
+
+📄 License
+
+This project is open for educational and demonstration purposes.
+
+🔥 Optional: Add This Section (Highly Recommended)
+
+At the bottom, add:
+
+👤 Author
+
+Kapil Nila
+B.Tech Electrical Engineering – IIT Ropar
+Aspiring Software Development Engineer
