@@ -2,16 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import BookmarkForm from "@/components/BookmarkForm";
+import BookmarkList from "@/components/BookmarkList";
 
 export default function Home() {
   const [session, setSession] = useState<any>(null);
   const [bookmarks, setBookmarks] = useState<any[]>([]);
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
+      setLoading(false);
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange(
@@ -30,14 +32,17 @@ export default function Home() {
   }, [session]);
 
   const fetchBookmarks = async () => {
+    setLoading(true);
     const { data } = await supabase
       .from("bookmarks")
       .select("*")
       .order("created_at", { ascending: false });
 
     setBookmarks(data || []);
+    setLoading(false);
   };
 
+  // 🔥 Realtime
   useEffect(() => {
     if (!session) return;
 
@@ -63,22 +68,13 @@ export default function Home() {
     await supabase.auth.signOut();
   };
 
-  const addBookmark = async () => {
-    if (!title || !url) return;
-
-    await supabase.from("bookmarks").insert({
-      title,
-      url,
-      user_id: session.user.id,
-    });
-
-    setTitle("");
-    setUrl("");
-  };
-
-  const deleteBookmark = async (id: string) => {
-    await supabase.from("bookmarks").delete().eq("id", id);
-  };
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black"></div>
+      </div>
+    );
+  }
 
   if (!session) {
     return (
@@ -97,12 +93,11 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100 py-10">
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
         
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-2xl font-bold">Smart Bookmark</h1>
             <p className="text-gray-500 text-sm">
-              Logged in as {session.user.email}
+              {session.user.email}
             </p>
           </div>
           <button
@@ -113,59 +108,17 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Add Form */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-          <input
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="border p-2 rounded-lg"
-          />
-          <input
-            type="text"
-            placeholder="URL"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            className="border p-2 rounded-lg"
-          />
-          <button
-            onClick={addBookmark}
-            className="bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            Add Bookmark
-          </button>
-        </div>
+        <BookmarkForm
+          userId={session.user.id}
+          onAdd={(newBookmark) =>
+            setBookmarks((prev) => [newBookmark, ...prev])
+          }
+        />
 
-        {/* Bookmark List */}
-        {bookmarks.length === 0 ? (
-          <div className="text-center text-gray-400 py-10">
-            No bookmarks yet 🚀
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {bookmarks.map((bookmark) => (
-              <div
-                key={bookmark.id}
-                className="flex justify-between items-center border p-3 rounded-xl hover:shadow transition"
-              >
-                <a
-                  href={bookmark.url}
-                  target="_blank"
-                  className="text-blue-600 font-medium hover:underline"
-                >
-                  {bookmark.title}
-                </a>
-                <button
-                  onClick={() => deleteBookmark(bookmark.id)}
-                  className="text-red-500 text-sm"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+        <BookmarkList
+          bookmarks={bookmarks}
+          setBookmarks={setBookmarks}
+        />
       </div>
     </div>
   );
